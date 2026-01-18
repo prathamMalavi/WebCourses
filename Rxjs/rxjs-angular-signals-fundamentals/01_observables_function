@@ -1,0 +1,67 @@
+// stacklibz online angular temp application
+import 'zone.js';
+import { Component, ElementRef, OnDestroy, OnInit } from '@angular/core';
+import { bootstrapApplication } from '@angular/platform-browser';
+import { from, fromEvent, Observable, of, Subscription, timer } from 'rxjs';
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  template: `
+    <h1 id="test">Hello from {{ name }}!</h1>
+    <a target="_blank" href="https://angular.dev/overview">
+      Learn more about Angular
+    </a>
+  `,
+})
+export class App implements OnInit, OnDestroy {
+  name = 'Angular';
+
+  sub$!: Subscription;
+  obsEvent$!: Observable<any>;
+
+  // Not working
+  btn = document.getElementById('test')!; // HTMLElement
+
+  constructor(private ref: ElementRef) {}
+
+  ngOnInit(): void {
+    this.ofFunction();
+    this.ofFunctionTimer();
+    this.fromFunction();
+    this.fromEvent();
+    this.obsEvent$.subscribe((value) => console.log(`Event Called ${value}`));
+  }
+
+  ofFunction() {
+    of(2, 5, 3).subscribe((value) => console.log('ofFunction : ' + value));
+    of([2, 5, 3]).subscribe((value) =>
+      console.log('ofFunction Array: ' + value)
+    );
+  }
+
+  fromEvent() {
+    this.obsEvent$ = fromEvent(document, 'click');
+  }
+
+  fromFunction() {
+    from([2, 5, 3]).subscribe((value) =>
+      console.log('fromFunction Array: ' + value)
+    );
+  }
+
+  ofFunctionTimer() {
+    this.sub$ = timer(2000, 3000).subscribe((counter) => {
+      of(2, 5, 3).subscribe((value) => {
+        console.log(
+          `ofTimerFunction ${counter} :: ${value} :: ${counter * value}`
+        );
+      });
+    });
+    timer(9000).subscribe((value) => this.sub$.unsubscribe());
+  }
+
+  ngOnDestroy(): void {}
+}
+
+bootstrapApplication(App);

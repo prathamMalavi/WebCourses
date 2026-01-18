@@ -1,0 +1,103 @@
+// @ts-nocheck
+// stacklibz online angular temp application
+import 'zone.js';
+import { Component, ElementRef, OnDestroy, OnInit } from '@angular/core';
+import { bootstrapApplication } from '@angular/platform-browser';
+import {
+  filter,
+  from,
+  fromEvent,
+  map,
+  Observable,
+  of,
+  Subscription,
+  take,
+  tap,
+  timer,
+} from 'rxjs';
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  template: `
+    <h1 id="test">Hello from {{ name }}!</h1>
+    <a target="_blank" href="https://angular.dev/overview">
+      Learn more about Angular
+    </a>
+  `,
+})
+export class App implements OnInit, OnDestroy {
+  name = 'Angular';
+
+  sub$!: Subscription;
+  obsEvent$!: Observable<any>;
+
+  // Not working
+  btn = document.getElementById('test')!; // HTMLElement
+
+  constructor(private ref: ElementRef) {}
+
+  ngOnInit(): void {
+    this.intoduction();
+    this.filterOperator();
+    this.ofFunctionTimer();
+    this.fromFunction();
+    // this.fromEvent();
+    // this.obsEvent$.subscribe((value) => console.log(`Event Called ${value}`));
+  }
+
+  intoduction() {
+    of(2, 5, 3, 4, 8, 6, 7, 9)
+      .pipe(
+        map((item) => item * 2),
+        tap((item) => console.log(`Tap Value ${item}`)),
+        take(3)
+      )
+      .subscribe((value) =>
+        console.log('operator intro ofFunction : ' + value)
+      );
+
+    of([2, 5, 3, 6], 2, 43, [7, 9])
+      .pipe(
+        map((item: number | number[]) => {
+          if (typeof item === 'object') {
+            return (item as []).map((temp) => temp * 2);
+            console.log(`map Value ${item}`);
+          } else {
+            return (item = (item as number) * 2);
+            console.log(`map Value ${item}`);
+          }
+        }),
+        tap((item) => console.log(`Tap Value ${item}`)),
+        take(3)
+      )
+      .subscribe((value) =>
+        console.log('operator intro ofFunction Array: ' + value)
+      );
+  }
+
+  filterOperator() {
+    of(2, 5, 3, 4, 8, 6, 7, 9)
+      .pipe(
+        tap((item) => console.log(`Filter Tap Value before ${item}`)),
+        filter((item) => {
+          if (item % 2 === 0) {
+            return true;
+          }
+          return false;
+        }),
+        tap((item) => console.log(`Filter Tap Value after ${item}`))
+      )
+      .subscribe((value) =>
+        console.log('Filter operator intro ofFunction : ' + value)
+      );
+  }
+
+  fromFunction() {}
+
+  ofFunctionTimer() {}
+
+  ngOnDestroy(): void {}
+}
+
+bootstrapApplication(App);
