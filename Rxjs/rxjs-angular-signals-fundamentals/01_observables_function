@@ -1,3 +1,4 @@
+// @ts-nocheck
 // stacklibz online angular temp application
 import 'zone.js';
 import { Component, ElementRef, OnDestroy, OnInit } from '@angular/core';
